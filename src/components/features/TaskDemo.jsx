@@ -1,10 +1,5 @@
-import { useEffect, useState } from 'react'
 import { DEMO_PROJECTS, DEMO_TASKS, PRIORITIES } from '../../data/features.js'
 import { CalendarIcon, CheckIcon, SubtaskIcon } from './icons.jsx'
-
-const TICK_EVERY = 1400 // ms between ticking off one task and the next
-const HOLD_STEPS = 2 // after the last task, wait this many ticks before starting over
-const REDUCED_MOTION_DONE = 2 // the still picture shown when the visitor prefers less motion
 
 // Classes for the gentle colour/opacity fades (Tailwind's transition utilities).
 const FADE = 'transition-all duration-[450ms] ease-out'
@@ -83,27 +78,11 @@ function TaskRow({ task, done, next }) {
   )
 }
 
-// A mock of the app's task list that ticks its tasks off one by one, then starts over.
+// A mock of the app's task list. The parent decides how many tasks are ticked
+// (Features.jsx runs the tick loop), so it can also react when all are done.
 // Props:
-//   playing        true = keep ticking (the parent sets this once the entrance is done and
-//                  the section is on screen)
-//   reducedMotion  true = no loop, just a still picture with 2 of 5 done
-export default function TaskDemo({ playing, reducedMotion }) {
-  // `step` counts up forever-ish: 0..5 ticks tasks off, then 2 "hold" steps, then back to 0.
-  const [step, setStep] = useState(0)
-  const totalSteps = DEMO_TASKS.length + HOLD_STEPS + 1 // 0,1,2,3,4,5 + 2 holds = 8
-
-  useEffect(() => {
-    if (!playing || reducedMotion) return
-
-    const timer = setInterval(() => {
-      setStep((current) => (current + 1) % totalSteps)
-    }, TICK_EVERY)
-    return () => clearInterval(timer) // stop when the section scrolls away or unmounts
-  }, [playing, reducedMotion, totalSteps])
-
-  // How many tasks are ticked (never more than the number of tasks, so the holds show "5 of 5").
-  const done = reducedMotion ? REDUCED_MOTION_DONE : Math.min(step, DEMO_TASKS.length)
+//   done   how many tasks, from the top, are ticked off (0 to DEMO_TASKS.length)
+export default function TaskDemo({ done }) {
   const open = DEMO_TASKS.length - done
   const project = DEMO_PROJECTS[0]
 
@@ -111,7 +90,7 @@ export default function TaskDemo({ playing, reducedMotion }) {
     <div
       role="img"
       aria-label="A Flowdo project called Launch week with five tasks being ticked off one by one"
-      className="rounded-[20px] border border-[#23242C] bg-[#101114] p-4 shadow-[0_40px_80px_rgba(0,0,0,0.6)] select-none sm:p-5"
+      className="rounded-[20px] border border-surface-line bg-surface p-4 shadow-[0_40px_80px_rgba(0,0,0,0.6)] select-none sm:p-5"
     >
       {/* a) Project tabs. The first one is active. */}
       <div className="flex flex-wrap gap-1.5">

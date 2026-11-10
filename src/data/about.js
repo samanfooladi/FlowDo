@@ -1,21 +1,26 @@
-// Text for the About section. Edit the copy here; About.jsx just loops over these lists.
+// Text for the About section. Edit the copy here; About.jsx just reads these.
 
-// Colours used by the timer dials.
+export const ABOUT_INTRO =
+  'A focus timer and a to-do list in one desktop app. Pick a task, start the timer, and every minute you focus is logged against it.'
+
+export const ABOUT_CARD_LABEL = 'Two ways to focus'
+
+// Colours used by the timer dial.
 const FOCUS = '#6366F1' // brand indigo
 const BREAK = '#34D399' // green
 
-// The two timer-mode cards. `tone` picks the badge colour ('indigo' or 'green').
-// `dial` describes the ring: each segment's size is proportional to its minutes.
+// The two modes of the featured card's toggle.
+//   dial.segments  drawn clockwise from the top; each slice's size follows its minutes
+//   stats          the three chips; tone 'green' = a break value
+//   mascot         which mascot stands next to the card in this mode
 export const ABOUT_MODES = [
   {
     id: 'pomodoro',
     title: 'Pomodoro',
-    badge: 'Fixed rounds',
-    tone: 'indigo',
     description:
-      'Focus for 25 minutes, take a 5-minute break, and after every fourth round take a longer 15-minute one. Every length can be changed.',
+      'Fixed rounds with a steady rhythm. Focus for 25 minutes, take a 5-minute break, and after every fourth round take a longer one. Every length can be changed.',
     dial: {
-      label: 'Pomodoro: four 25 minute focus rounds with short breaks and one long break',
+      label: 'Pomodoro: four 25 minute focus rounds with 5 minute breaks, and a 15 minute long break at the end',
       time: '25:00',
       caption: 'round 1 of 4',
       segments: [
@@ -29,28 +34,38 @@ export const ABOUT_MODES = [
         { minutes: 15, color: BREAK },
       ],
     },
+    stats: [
+      { label: 'Focus', value: '25m' },
+      { label: 'Break', value: '5m', tone: 'green' },
+      { label: 'Long break', value: '15m', tone: 'green' },
+    ],
+    mascot: 'guide',
   },
   {
     id: 'flowmodoro',
     title: 'Flowmodoro',
-    badge: 'Open-ended',
-    tone: 'green',
     description:
-      "No clock to beat. Focus as long as you're in the zone, then stop. Your break is a fifth of the time you focused, between 1 and 30 minutes.",
+      'No clock to beat. The timer counts up while you focus, and when you stop, your break is a fifth of the time you put in.',
     dial: {
       label: 'Flowmodoro: 50 minutes of focus earns a 10 minute break',
       time: '50:00',
       caption: '+10 min break',
-      captionTone: 'green', // shows the caption in green instead of grey
+      captionTone: 'green',
       segments: [
         { minutes: 50, color: FOCUS },
         { minutes: 10, color: BREAK },
       ],
     },
+    stats: [
+      { label: 'Break', value: '÷ 5' },
+      { label: 'Shortest', value: '1m', tone: 'green' },
+      { label: 'Longest', value: '30m', tone: 'green' },
+    ],
+    mascot: 'meditate',
   },
 ]
 
-// The three facts in the strip at the bottom. `icon` is a key in FACT_ICONS (About.jsx).
+// The three fact cards. `icon` is a key in FACT_ICONS (About.jsx).
 export const ABOUT_FACTS = [
   {
     icon: 'computer',
@@ -63,8 +78,8 @@ export const ABOUT_FACTS = [
     text: 'The timer runs on real clock time, so minimizing or a sleeping laptop never breaks a session.',
   },
   {
-    icon: 'code',
-    title: 'Free and open source',
-    text: 'Built in the open on GitHub. Use it, read the code, or help shape what comes next.',
+    icon: 'history',
+    title: 'One shared history',
+    text: 'Pomodoro and Flowmodoro sessions land in the same history, even the ones you stop early.',
   },
 ]

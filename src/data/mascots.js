@@ -1,49 +1,51 @@
-// The four mascots that float around the 3D logo in the Hero.
-// Change a position, size or float timing here; Hero.jsx just loops over this list.
-//
-// className: where it sits inside the Hero's centred mascot area, and how tall it is.
-//   clamp(min, preferred, max) shrinks the height on smaller desktops so it never
-//   runs into the title, the logo or the download buttons.
-//   The bottom two use bottom-[calc(50%-265px)] instead of a plain %: the content is centred,
-//   and that puts their feet just above the row of download buttons at any screen height.
-//   (The button row is ~860px wide, so a plain bottom-[5%] would sit on top of the buttons.)
-// width / height: the real pixel size of the .webp file.
-// float: duration = seconds for one up (or down) move, delay = start offset, tilt = max degrees.
-// The durations are all different, so the mascots never move in sync.
+// Every mascot picture. Each exists as .webp and .png in public/assets/mascot/,
+// all 720px tall with a transparent background. `width` is the real pixel width,
+// so the browser can reserve the right space while the image loads.
+// Use them with <MascotImage name="coffee" /> (src/components/ui/MascotImage.jsx).
 
-const DIR = '/assets/mascot'
+export const MASCOT_DIR = '/assets/mascot'
+export const MASCOT_HEIGHT = 720
 
+export const MASCOTS = {
+  point: { file: 'flowdo-mascot-1-point', width: 480 },
+  checklist: { file: 'flowdo-mascot-2-checklist', width: 480 },
+  typing: { file: 'flowdo-mascot-3-typing', width: 476 },
+  stretch: { file: 'flowdo-mascot-4-stretch', width: 361 },
+  guide: { file: 'flowdo-mascot-5-guide', width: 409 },
+  desk: { file: 'flowdo-mascot-6-desk', width: 564 },
+  coffee: { file: 'flowdo-mascot-7-coffee', width: 424 },
+  meditate: { file: 'flowdo-mascot-8-meditate', width: 470 },
+  sleep: { file: 'flowdo-mascot-9-sleep', width: 556 },
+  cheer: { file: 'flowdo-mascot-10-cheer', width: 495 },
+  wave: { file: 'flowdo-mascot-11-wave', width: 295 },
+  peek: { file: 'flowdo-mascot-12-peek', width: 265 },
+  cart: { file: 'flowdo-mascot-13-cart', width: 561 },
+}
+
+// The four mascots floating around the 3D logo in the Hero (hidden at 960px and below).
+// className: where it sits inside the Hero and how tall it is. clamp() shrinks them a bit
+//   on small desktops so they never run into the title or the logo.
+// float: loop = seconds for one full up-and-down, delay = start offset (negative = start
+//   part-way through), tilt = max degrees. All loops differ, so they never move in sync.
 export const HERO_MASCOTS = [
   {
-    // Top-left: holding a checklist
-    src: `${DIR}/flowdo-mascot-2-checklist.webp`,
-    width: 480,
-    height: 720,
-    className: 'left-[3%] top-[11%] h-[clamp(190px,21vw,300px)]',
-    float: { duration: 6, delay: 0, tilt: 1.5 },
+    name: 'checklist', // top-left
+    className: 'left-[3%] top-[11%] h-[clamp(200px,21vw,300px)]',
+    float: { loop: 6, delay: 0, tilt: 1.5 },
   },
   {
-    // Top-right: points left, toward the logo
-    src: `${DIR}/flowdo-mascot-1-point.webp`,
-    width: 480,
-    height: 720,
-    className: 'right-[3%] top-[9%] h-[clamp(190px,21vw,300px)]',
-    float: { duration: 6.8, delay: 1.2, tilt: -1.5 },
+    name: 'point', // top-right
+    className: 'right-[3%] top-[9%] h-[clamp(200px,21vw,300px)]',
+    float: { loop: 6.8, delay: -2.1, tilt: -1.5 },
   },
   {
-    // Bottom-left: typing on a laptop
-    src: `${DIR}/flowdo-mascot-3-typing.webp`,
-    width: 476,
-    height: 720,
-    className: 'left-[11%] bottom-[calc(50%-265px)] h-[clamp(140px,15vw,220px)]',
-    float: { duration: 7.4, delay: 0.6, tilt: 1.2 },
+    name: 'typing', // bottom-left
+    className: 'left-[11%] bottom-[5%] h-[clamp(150px,15vw,220px)]',
+    float: { loop: 7.4, delay: -4.4, tilt: 1.2 },
   },
   {
-    // Bottom-right: stretching
-    src: `${DIR}/flowdo-mascot-4-stretch.webp`,
-    width: 361,
-    height: 720,
-    className: 'right-[12%] bottom-[calc(50%-265px)] h-[clamp(170px,19vw,270px)]',
-    float: { duration: 5.6, delay: 2, tilt: -1.5 },
+    name: 'stretch', // bottom-right
+    className: 'right-[12%] bottom-[5%] h-[clamp(180px,19vw,270px)]',
+    float: { loop: 5.6, delay: -1.3, tilt: -1.5 },
   },
 ]

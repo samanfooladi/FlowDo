@@ -1,24 +1,50 @@
-// Shared by both styles: pill shape, size, hover lift, keyboard focus ring.
-const BASE =
-  'inline-flex h-14 items-center justify-center gap-3 rounded-full px-7 text-base font-semibold transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-brand-light'
+// Pill-shaped call-to-action. Renders an <a> when `href` is given, otherwise a <button>.
+//
+// Props:
+//   variant   'primary' (white with an indigo ring), 'glass' (see-through indigo)
+//   size      'lg' (56px, Hero) or 'md' (48px)
+//   icon      shown before the label
+//   className extra layout classes
 
-const VARIANTS = {
-  // White pill with a soft indigo ring: the main call to action.
-  primary:
-    'bg-white text-[#0F1115] shadow-[0_0_0_6px_rgba(99,102,241,0.18)] hover:shadow-[0_0_0_8px_rgba(99,102,241,0.28)]',
-  // Dark see-through pill: for the other options next to a primary button.
-  secondary:
-    'border border-white/15 bg-white/5 text-text backdrop-blur-sm hover:border-brand-light/50 hover:bg-white/10',
+const BASE =
+  'inline-flex items-center justify-center gap-2.5 rounded-full font-semibold whitespace-nowrap transition-[transform,box-shadow,background-color,border-color] duration-200 hover:-translate-y-0.5'
+
+const SIZES = {
+  lg: 'h-14 px-7 text-[17px]',
+  md: 'h-12 px-6 text-[15px]',
 }
 
-// Reusable call-to-action link styled as a pill.
-// Pass `icon` to show something before the label, `variant="secondary"` for the quieter style,
-// and `className` for extra layout classes (like a width).
-export default function Button({ href, icon, variant = 'primary', className = '', children, ...props }) {
+const VARIANTS = {
+  primary:
+    'bg-white text-[#0B0A1A] shadow-[0_0_0_6px_rgba(99,102,241,0.28)] hover:shadow-[0_0_0_8px_rgba(99,102,241,0.38)]',
+  glass:
+    'border border-[rgba(165,180,252,0.4)] bg-[rgba(99,102,241,0.14)] text-white backdrop-blur-md hover:border-[rgba(165,180,252,0.65)] hover:bg-[rgba(99,102,241,0.22)]',
+}
+
+export default function Button({
+  href,
+  icon,
+  variant = 'primary',
+  size = 'lg',
+  className = '',
+  children,
+  ...props
+}) {
+  const classes = `${BASE} ${SIZES[size]} ${VARIANTS[variant]} ${className}`
+
+  if (href) {
+    return (
+      <a href={href} className={classes} {...props}>
+        {icon}
+        {children}
+      </a>
+    )
+  }
+
   return (
-    <a href={href} className={`${BASE} ${VARIANTS[variant]} ${className}`} {...props}>
+    <button type="button" className={classes} {...props}>
       {icon}
       {children}
-    </a>
+    </button>
   )
 }

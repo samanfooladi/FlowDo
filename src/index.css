@@ -1,67 +1,286 @@
 @import "tailwindcss";
 
-/* Design tokens. Each one becomes a Tailwind class, e.g. bg-brand, text-muted, font-sans. */
+/* ============================================================
+   Design tokens. Each one becomes a Tailwind class,
+   e.g. --color-base -> bg-base, --color-muted -> text-muted.
+   ============================================================ */
 @theme {
-  --color-bg: #000000;
-  --color-text: #FFFFFF;
-  --color-muted: #A3A9B8;
-  --color-subtle: #8A90A0;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
 
+  /* Page background (black with a hint of purple) */
+  --color-base: #050409;
+  --color-bg: #050409;
+
+  /* Text */
+  --color-text: #FFFFFF; /* headings */
+  --color-muted: #A3A9B8; /* body text */
+  --color-subtle: #8A90A0; /* muted text */
+
+  /* Indigo scale (500 is the logo colour) */
+  --color-indigo-100: #E0E7FF;
+  --color-indigo-200: #C7D2FE;
+  --color-indigo-300: #A5B4FC;
+  --color-indigo-400: #818CF8;
+  --color-indigo-500: #6366F1;
+  --color-indigo-600: #4F46E5;
+  --color-indigo-700: #4338CA;
+
+  /* Short aliases for the brand colour, used across the components */
   --color-brand: #6366F1;
-  --color-brand-violet: #8B5CF6;
-  --color-brand-deep: #4F46E5;
   --color-brand-light: #A5B4FC;
+  --color-brand-deep: #4F46E5;
   --color-brand-darker: #4338CA;
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Deep tints for section gradients */
+  --color-deep-hero: #1E1B6B;
+  --color-deep-night: #0D0B2B;
+  --color-deep-download: #13113F;
+  --color-deep-about: #0B0A22;
+  --color-deep-about-2: #13113D;
+  --color-deep-footer: #0A0920;
+  --color-deep-glow: #2B2899;
 
-  /* Gives us the class `animate-glow-spin` (one full turn every 40s). */
+  /* Breaks / success */
+  --color-break: #34D399;
+  --color-break-light: #6EE7B7;
+
+  /* Task priorities */
+  --color-urgent: #F43F5E;
+  --color-high: #F59E0B;
+  --color-normal: #3B82F6;
+  --color-low: #8A90A0;
+
+  /* Surfaces inside the mock app panels */
+  --color-surface: #101114;
+  --color-surface-line: #23242C;
+
+  /* Easing curves */
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* `animate-glow-spin`: one full turn every 40s (Hero glow). */
   --animate-glow-spin: glow-spin 40s linear infinite;
+  /* `animate-ring-spin`: one full turn every 80s (Download tick ring). */
+  --animate-ring-spin: glow-spin 80s linear infinite;
   @keyframes glow-spin {
     to { transform: rotate(360deg); }
   }
 
-  /* Gives us `animate-check-pop`: a quick springy grow (0.92 -> 1) when a task gets ticked.
-     The cubic-bezier overshoots past 1 a little, which makes it feel bouncy. */
+  /* `animate-check-pop`: a quick springy grow when a task gets ticked. */
   --animate-check-pop: check-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   @keyframes check-pop {
     from { transform: scale(0.92); }
     to { transform: scale(1); }
   }
+
+  /* `animate-fade-swap`: content that was just swapped in (About mode text). */
+  --animate-fade-swap: fade-swap 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  @keyframes fade-swap {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
 }
 
-/* Base page styles */
-body {
-  @apply bg-bg font-sans text-text antialiased;
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  html {
+    background: var(--color-base);
+  }
+  body {
+    @apply bg-base font-sans text-text antialiased;
+    overflow-x: clip; /* no horizontal page scroll, whatever a section does */
+  }
+  /* One visible focus ring for every link, button and control. */
+  :focus-visible {
+    outline: 2px solid #A5B4FC;
+    outline-offset: 3px;
+  }
 }
 
-/* Hero glow: a colour wheel of the brand colours (blurred with Tailwind classes). */
-.hero-glow {
-  background: conic-gradient(
-    var(--color-brand),
-    var(--color-brand-violet),
-    var(--color-brand-deep),
-    var(--color-brand-light),
-    var(--color-brand-darker),
-    var(--color-brand)
-  );
+/* ============================================================
+   Reusable effect classes (used as Tailwind utilities)
+   ============================================================ */
+
+/* Glass card */
+@utility glass {
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  background: rgba(99, 102, 241, 0.07);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
 }
 
-/* Timer-dial ticks: a thin wedge every 6°, then a mask keeps only the outer 9px band. */
-.tick-ring {
+/* Stronger glass card (About's featured card) */
+@utility glass-featured {
+  border: 1px solid rgba(129, 140, 248, 0.45);
+  background: rgba(99, 102, 241, 0.07);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.08), 0 30px 80px rgba(67, 56, 202, 0.22);
+}
+
+/* Shine text: a moving indigo-to-white gradient inside the letters. */
+@utility shine-text {
+  background-image: linear-gradient(90deg, #818CF8, #A5B4FC, #EEF0FF, #A5B4FC, #818CF8);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+/* Same gradient, shared across separate letters (Hero "Do", whose letters animate on their own).
+   HeroTitle measures the word and sets --shine-w (gradient width) and --shine-x (this letter's offset). */
+@utility shine-split {
+  background-image: linear-gradient(90deg, #818CF8, #A5B4FC, #EEF0FF, #A5B4FC, #818CF8);
+  background-size: var(--shine-w, 200%) 100%;
+  background-position: var(--shine-x, 0px) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+/* Fine tick ring: a thin line every 6°, masked into a narrow ring. */
+@utility tick-ring {
   border-radius: 50%;
   background: repeating-conic-gradient(
     from -0.25deg,
-    rgba(165, 180, 252, 0.32) 0deg 0.5deg,
+    rgba(165, 180, 252, 0.34) 0deg 0.5deg,
     transparent 0.5deg 6deg
   );
   --ring-mask: radial-gradient(
     closest-side,
-    transparent calc(100% - 9px),
-    #000 calc(100% - 9px),
+    transparent calc(100% - var(--tick-length, 12px)),
+    #000 calc(100% - var(--tick-length, 12px)),
     #000 100%,
     transparent 100%
   );
   -webkit-mask: var(--ring-mask);
   mask: var(--ring-mask);
+}
+
+/* Aurora blob: a big blurred circle. Aurora.jsx sets the size, colour and drift timing. */
+@utility aurora-blob {
+  border-radius: 9999px;
+  filter: blur(90px);
+}
+
+/* Twinkle dot: 4px, pale indigo with a glow. */
+@utility twinkle-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #C7D2FE;
+  box-shadow: 0 0 8px 1px #6366F1;
+  opacity: 0.6;
+}
+
+/* Used by the About dial to "draw" a new ring clockwise. */
+@property --sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 360deg;
+}
+
+/* ============================================================
+   Looping animations. They only run when the visitor allows motion;
+   with reduced motion every element simply stays in its resting state.
+   Timings come from CSS variables (--dur, --delay, ...) set inline.
+   ============================================================ */
+@keyframes shine {
+  from { background-position: 0% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes shine-split {
+  from { background-position: var(--shine-x, 0px) 0; }
+  to { background-position: calc(var(--shine-x, 0px) + var(--shine-w, 0px)) 0; }
+}
+@keyframes aurora-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(7%, -6%) scale(1.08); }
+  66% { transform: translate(-6%, 5%) scale(0.95); }
+}
+@keyframes twinkle {
+  0% { opacity: 0; transform: translateY(0); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-22px); }
+}
+/* Float up and down with a slight tilt. --bob = height, --tilt = max angle. */
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(calc(var(--tilt, 0deg) * -1)); }
+  50% { transform: translateY(calc(var(--bob, 18px) * -1)) rotate(var(--tilt, 0deg)); }
+}
+/* Endless strips: --shift is how far one copy of the content is (e.g. -50% for two copies). */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--shift, -50%)); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(var(--shift, -50%)); }
+  to { transform: translateX(0); }
+}
+@keyframes push-wobble {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(6px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(5px); }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-3deg); }
+}
+@keyframes steam {
+  0% { opacity: 0; transform: translateY(0) scale(0.6); }
+  30% { opacity: 0.75; }
+  100% { opacity: 0; transform: translateY(-46px) scale(1.5); }
+}
+/* Peeking mascot: hidden, slides in, stays, slides out, hidden. */
+@keyframes peek {
+  0%, 12% { transform: translateX(100%); }
+  24%, 70% { transform: translateX(0); }
+  82%, 100% { transform: translateX(100%); }
+}
+@keyframes ring-draw {
+  from { --sweep: 0deg; }
+  to { --sweep: 360deg; }
+}
+@keyframes ring-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .shine-text { animation: shine 6s linear infinite; }
+    .shine-split { animation: shine-split 6s linear infinite; }
+    .aurora-blob { animation: aurora-drift var(--dur, 22s) ease-in-out var(--delay, 0s) infinite; }
+    .twinkle-dot { opacity: 0; animation: twinkle 5s ease-in-out var(--delay, 0s) infinite; }
+    .loop-bob { animation: bob var(--dur, 6s) ease-in-out var(--delay, 0s) infinite; }
+    .loop-marquee-left { animation: marquee-left var(--dur, 40s) linear infinite; }
+    .loop-marquee-right { animation: marquee-right var(--dur, 40s) linear infinite; }
+    .loop-wobble { animation: push-wobble 1.4s ease-in-out infinite; }
+    .loop-sway { animation: sway 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+    .loop-steam { animation: steam 2.8s ease-out var(--delay, 0s) infinite; }
+    .loop-peek { animation: peek 9s ease-in-out infinite; }
+    .ring-draw { animation: ring-draw 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .ring-fade { animation: ring-fade 0.4s ease-out both; }
+  }
+  /* Reduced motion: an old dial ring is simply removed. */
+  @media (prefers-reduced-motion: reduce) {
+    .ring-fade { opacity: 0; }
+  }
+
+  /* A section adds this while it's off screen, so its loops stop costing anything. */
+  .loops-paused,
+  .loops-paused *,
+  .loops-paused *::before,
+  .loops-paused *::after {
+    animation-play-state: paused !important;
+  }
 }

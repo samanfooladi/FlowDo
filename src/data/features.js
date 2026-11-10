@@ -1,5 +1,11 @@
 // Text for the Features section. Edit the copy here; the components just loop over these lists.
 
+export const FEATURES_INTRO =
+  'Group tasks into projects, break big ones into steps, set deadlines and priorities. Then pick one and start the timer.'
+
+// The small label next to the mascot: while ticking, and when every task is done.
+export const FEATURES_MASCOT_LABEL = { working: 'Ticking through Launch week', done: 'All done!' }
+
 // Priority levels, with the same colours as the real app.
 export const PRIORITIES = {
   urgent: { label: 'Urgent', color: '#F43F5E' },
